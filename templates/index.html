@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avatar Upload</title>
+    <input type="hidden" id="email_data" value="{{ account_email }}">
+    <style>
+.avatar-upload {
+   position: relative;
+   max-width: 205px;
+   margin: 50px auto;
+ }
+ .avatar-upload .avatar-edit {
+   position: absolute;
+   right: 12px;
+   z-index: 1;
+   top: 10px;
+ }
+ .avatar-upload .avatar-edit input {
+   display: none;
+ }
+ .avatar-upload .avatar-edit input + label {
+   display: inline-block;
+   width: 34px;
+   height: 34px;
+   margin-bottom: 0;
+   border-radius: 100%;
+   background: #FFFFFF;
+   border: 1px solid transparent;
+   box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.12);
+   cursor: pointer;
+   font-weight: normal;
+   transition: all 0.2s ease-in-out;
+ }
+ .avatar-upload .avatar-edit input + label:hover {
+   background: #f1f1f1;
+   border-color: #d6d6d6;
+ }
+ .avatar-upload .avatar-edit input + label:after {
+   content: "\f040";
+   font-family: 'FontAwesome';
+   color: #757575;
+   position: absolute;
+   top: 10px;
+   left: 0;
+   right: 0;
+   text-align: center;
+   margin: auto;
+ }
+ 
+ 
+
+
+        .avatar-upload {
+            position: relative;
+            max-width: 205px;
+            margin: 50px auto;
+        }
+        .avatar-edit {
+            position: absolute;
+            right: 12px;
+            z-index: 1;
+            top: 10px;
+        }
+        .avatar-edit input {
+            display: none;
+        }
+        .avatar-edit input + label {
+            display: inline-block;
+            width: 34px;
+            height: 34px;
+            margin-bottom: 0;
+            border-radius: 100%;
+            background: #ffffff;
+            border: 1px solid transparent;
+            box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.12);
+            cursor: pointer;
+            font-weight: normal;
+            transition: all 0.2s ease-in-out;
+        }
+        .avatar-edit input + label:hover {
+            background: #f1f1f1;
+            border-color: #d6d6d6;
+        }
+        .avatar-preview {
+            width: 192px;
+            height: 192px;
+            position: relative;
+            border-radius: 100%;
+            border: 6px solid #f8f8f8;
+            box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.1);
+        }
+        .avatar-preview > div {
+            width: 100%;
+            height: 100%;
+            border-radius: 100%;
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="avatar-upload">
+    <input type="hidden" id="email_data" value="{{ account_email }}">
+    <div class="avatar-edit">
+        <input type='file' id="imageUpload" accept=".png, .jpg, .jpeg" />
+        <label for="imageUpload"></label>
+    </div>
+    <div class="avatar-preview">
+        <div id="imagePreview" style="background-image: url('{{ image_url }}');">
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById("imageUpload").addEventListener("change", function() {
+        var file = this.files[0];
+        var formData = new FormData();
+        var accountdata = document.getElementById("email_data").value;
+        console.log("File name: ", file);
+        console.log("Current Account: ",accountdata);  
+        formData.append("file", file);
+        formData.append("email",accountdata); 
+        // AJAX request to upload the image
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/upload", true);
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                // Image upload successful
+                var response = JSON.parse(xhr.responseText);
+                console.log("Output response file upload",response.url);
+                document.getElementById("imagePreview").style.backgroundImage = "url('" + response.url + "')";
+            }
+        };
+        xhr.send(formData);
+    });
+</script>
+
+</body>
+</html>
